@@ -16,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -130,7 +131,8 @@ fun GuessTheNumberView(
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
-                )
+                ),
+                colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray, placeholderColor = Color.DarkGray)
             )
         }
 
@@ -167,12 +169,14 @@ fun GuessTheNumberView(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
-                            .padding(20.dp)
+                            .padding(20.dp),
+                        color = Color.DarkGray
                     )
 
                     Text(
                         text = "You Scored : ${guessTheNumberUIState.score}",
-                        modifier = Modifier.padding(start = 24.dp)
+                        modifier = Modifier.padding(start = 24.dp),
+                        color = Color.DarkGray
                     )
                     Row (
                         modifier = Modifier.padding(start = 12.dp)
@@ -185,6 +189,7 @@ fun GuessTheNumberView(
                                 .padding(vertical = 20.dp, horizontal = 4.dp)
                         ) {
                             Text("Exit")
+
                         }
                         Button(
                             onClick = {
