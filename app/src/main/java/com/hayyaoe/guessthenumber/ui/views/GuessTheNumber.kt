@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -47,7 +48,8 @@ fun GuessTheNumberView(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(),
+            .fillMaxHeight()
+            .background(color = Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -57,11 +59,14 @@ fun GuessTheNumberView(
             text = "Guess The Number",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 20.dp)
+            modifier = Modifier.padding(bottom = 20.dp),
+            color = Color.Black
         )
 
         Card(
-            modifier = Modifier.padding(horizontal = 50.dp)
+            modifier = Modifier.padding(horizontal = 50.dp),
+            colors = CardDefaults.cardColors(Color(0xfff1f3f4)),
+            elevation = CardDefaults.cardElevation(2.dp)
         ) {
 
             Box(
@@ -93,7 +98,8 @@ fun GuessTheNumberView(
                     .padding(vertical = 12.dp),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
+                fontSize = 24.sp,
+                color = Color.Black
             )
 
             Text(
@@ -102,13 +108,15 @@ fun GuessTheNumberView(
                     .fillMaxWidth()
                     .padding(vertical = 12.dp),
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
             )
             Text(
                 text = "Score: ${guessTheNumberUIState.score}",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
             )
             OutlinedTextField(
                 value = guess,

@@ -15,6 +15,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
@@ -29,10 +31,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hayyaoe.guessthenumber.R
 import com.hayyaoe.guessthenumber.model.GPAUiState
@@ -40,15 +45,15 @@ import com.hayyaoe.guessthenumber.viewmodel.GPACounterViewModel
 
 @Composable
 fun GPACounterView(
-gpaCounterViewModel: GPACounterViewModel
+gpaCounterViewModel: GPACounterViewModel = viewModel()
 ) {
     val uiState by gpaCounterViewModel.uiState.collectAsState()
 
     LazyColumn {
 
-        Log.d("CEK2","$uiState")
-
-        item { InputBoxes(gpaCounterViewModel) }
+        item {
+            InputBoxes(gpaCounterViewModel)
+        }
         items(uiState){
             gpaUiState->
             ScoreCard(
@@ -68,68 +73,95 @@ fun InputBoxes(gpaCounterViewModel: GPACounterViewModel) {
     var courseName by rememberSaveable { mutableStateOf("") }
 
     Column(
-        modifier = Modifier.padding(horizontal = 18.dp),
+        modifier = Modifier.padding(horizontal = 18.dp, vertical = 12.dp),
     ) {
-        Text(
-            text = "Courses",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
-        )
-        Text(
-            text = "Total SKS: ${gpaCounterViewModel.getSks()}",
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-        Text(
-            text = "IPK: ${gpaCounterViewModel.getGpa()}",
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            TextBox(
-                value = sks,
-                onValueChanged = { sks = it },
-                placeHolder = "Input SKS",
-                keyboardType = KeyboardType.Number,
-                modifier = Modifier.width(180.dp)
+
+        Card(
+            modifier = Modifier.padding(top = 12.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(Color(0xfff1f3f4)),
+            elevation = CardDefaults.cardElevation(2.dp)
+        ){
+            Text(
+                text = "Courses",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(start = 14.dp,top = 12.dp, bottom = 4.dp)
             )
 
-            TextBox(
-                value = score,
-                onValueChanged = { score = it },
-                placeHolder = "Input Score",
-                keyboardType = KeyboardType.Number
+            Text(
+                text = "Total SKS: ${gpaCounterViewModel.getSks()}",
+                fontWeight= FontWeight.SemiBold,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(start = 16.dp,bottom = 4.dp)
             )
-        }
-
-        Row(
-            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            TextBox(
-                value = courseName,
-                onValueChanged = { courseName = it },
-                placeHolder = "Course Name",
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
+            Text(
+                text = "GPA: ${gpaCounterViewModel.getGpa()}",
+                fontWeight= FontWeight.SemiBold,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(start = 16.dp,bottom = 4.dp)
             )
 
-            Button(
-                onClick = {
-                    gpaCounterViewModel.addScore(score = score, sks = sks, courseName = courseName)
-                    score=""
-                    sks=""
-                    courseName=""
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Column {
+                    TextBox(
+                        value = sks,
+                        onValueChanged = { sks = it },
+                        placeHolder = "Input SKS",
+                        keyboardType = KeyboardType.Number,
+                        modifier = Modifier.width(170.dp),
+                        isError = !gpaCounterViewModel.inputInteger(sks)
+
+                        )
                 }
-            )
-            {
-                Text(
-                    text = "+",
-                    fontSize = 32.sp
+                Column {
+                    TextBox(
+                        value = score,
+                        onValueChanged = { score = it },
+                        placeHolder = "Input Score",
+                        keyboardType = KeyboardType.Number,
+                        isError = gpaCounterViewModel.lessThanFour(score)
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextBox(
+                    value = courseName,
+                    onValueChanged = { courseName = it },
+                    placeHolder = "Course Name",
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done,
+                    modifier = Modifier.width(260.dp)
                 )
+
+                Button(
+                    onClick = {
+                        gpaCounterViewModel.addScore(score = score, sks = sks, courseName = courseName)
+                        score=""
+                        sks=""
+                        courseName=""
+
+                    },
+                    enabled = gpaCounterViewModel.inputValid(score = score, sks = sks, courseName = courseName)
+                )
+                {
+                    Text(
+                        text = "+",
+                        fontSize = 32.sp
+                    )
+                }
             }
         }
     }
@@ -144,7 +176,8 @@ fun TextBox(
     placeHolder: String,
     keyboardType: KeyboardType,
     modifier: Modifier = Modifier,
-    imeAction: ImeAction = ImeAction.Next
+    imeAction: ImeAction = ImeAction.Next,
+    isError: Boolean = false
 ) {
     OutlinedTextField(
         value = value,
@@ -155,14 +188,24 @@ fun TextBox(
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = keyboardType,
             imeAction = imeAction
-        )
+        ),
+        isError = isError,
     )
+
+    if (isError){
+        Text(
+            text = "Invalid Input"
+        )
+    }
 }
 
 @Composable
 fun ScoreCard(gpaUiState: GPAUiState, uiState : GPACounterViewModel) {
     Card (
-        modifier = Modifier.padding(horizontal = 18.dp , vertical = 4.dp)
+        modifier = Modifier.padding(horizontal = 18.dp , vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(1.dp),
+        colors = CardDefaults.cardColors(Color(0xfff1f3f4))
+
     ){
         Row(
             modifier = Modifier
@@ -175,7 +218,7 @@ fun ScoreCard(gpaUiState: GPAUiState, uiState : GPACounterViewModel) {
                 modifier =Modifier.weight(1f),
             ) {
                 Text(
-                    text = "Name: ${gpaUiState.courseName}",
+                    text = gpaUiState.courseName,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
@@ -200,6 +243,6 @@ fun ScoreCard(gpaUiState: GPAUiState, uiState : GPACounterViewModel) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun GPACounterPreview() {
-    GPACounterView(GPACounterViewModel())
-//    ScoreCard()
+    GPACounterView()
+//    ScoreCard(gpaUiState = GPAUiState(), uiState = viewModel())
 }
