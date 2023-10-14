@@ -1,10 +1,6 @@
 package com.hayyaoe.guessthenumber.viewmodel
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.core.text.isDigitsOnly
+
 import androidx.lifecycle.ViewModel
 import com.hayyaoe.guessthenumber.model.GPAUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,9 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.text.DecimalFormat
 
-//sealed class ListGPAUiState{
-//    data class Loading(val data: MutableList<GPAUiState>) : ListGPAUiState()
-//}
+
 
 class GPACounterViewModel: ViewModel() {
     private val _uiState = MutableStateFlow<List<GPAUiState>>(emptyList())
